@@ -1,18 +1,18 @@
 import React, { Component } from "react"
 
-export default class Box extends Component{
+export default class PlayerBox extends Component{
   constructor(props) {
     super(props);
   }
   
   render(){
     let style= {
-      left: this.props.coordinates.x,
-      top: this.props.coordinates.y
+      left: this.props.player.x,
+      top: this.props.player.y
     }
 
     return(
-      <div className="box"
+      <div className="box player-box"
            style={style}>
       </div>
     )

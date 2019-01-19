@@ -1,7 +1,18 @@
 .box {
-    background-color: red;
+    background-color: black;
     width: 40px;
     height: 40px;
+    position: absolute;
+}
+
+.board {
+    width: 320px;
+    height: 160px;
+    background-color: yellowgreen;
     position: relative;
+}
+
+.box.player-box {
+    background-color: red;
 }
 
