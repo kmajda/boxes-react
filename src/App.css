@@ -1,10 +1,17 @@
-.box {
-    background-color: black;
+.box, .wall {
     width: 40px;
     height: 40px;
     position: absolute;
 }
-
+.wall {
+    background-color: black;
+}
+.box{
+    background-color: saddlebrown;
+}
+.box.player-box {
+    background-color: red;
+}
 .board {
     width: 320px;
     height: 160px;
@@ -12,7 +19,4 @@
     position: relative;
 }
 
-.box.player-box {
-    background-color: red;
-}
 
