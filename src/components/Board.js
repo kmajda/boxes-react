@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import "./App.css"
+import "../styles/App.css"
 import PlayerBox from "./PlayerBox"
 
 export default class Board extends Component{
