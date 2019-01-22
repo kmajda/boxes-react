@@ -48,8 +48,8 @@ export function checkIfWallIsNear(position, walls){
   return result;
 }
 
-export function checkIfExit(playerPosition, exit){
-  if(playerPosition.x == exit[0] && playerPosition.y == exit[1]){
+export function checkIfExit(position, exit){
+  if(position.x == exit[0] && position.y == exit[1]){
     return true;
   }
   return false;
@@ -64,7 +64,7 @@ export function checkIfBoxIsNear(position, boxes){
   return result;
 }
 
-export function checkIfBoxIsBlocked(position, boxes, walls){
+export function checkIfBoxIsBlocked(position, boxes, walls, exit){
   if(checkIfEndOfBoard(position)){
     return true;
   }
@@ -72,6 +72,9 @@ export function checkIfBoxIsBlocked(position, boxes, walls){
     return true;
   }
   if(checkIfBoxIsNear(position, boxes)){
+    return true;
+  }
+  if(checkIfExit(position, exit)){
     return true;
   }
 

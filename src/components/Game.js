@@ -52,7 +52,7 @@ export default class Game extends Component{
     let indexOfNearBox = getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
     if(indexOfNearBox != null){
       let intendedBoxPosition = getIntendedPosition({...intendedPlayerPosition}, e.keyCode, arrowCodes())
-      if(checkIfBoxIsBlocked(intendedBoxPosition, this.state.currentBoard.boxes, this.state.currentBoard.walls)){
+      if(checkIfBoxIsBlocked(intendedBoxPosition, this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)){
         return;
       }
       else{
