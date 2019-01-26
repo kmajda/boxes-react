@@ -86,11 +86,15 @@ export default class Game extends Component{
 
   render(){
     return(
-      <div>
-        <ul>
-          <li><button onClick={(e, id) => this.handleLevelClick(e, 1)}>Level 1</button></li>
-          <li><button onClick={(e, id) => this.handleLevelClick(e, 2)}>Level 2</button></li>
-        </ul>
+      <div className="container">
+        <div className="nav">
+          <h1>Press ARROWS <br/>to move green<br/>boxes and find<br/> a way to exit</h1>
+          <ul>
+            <li><a className={this.state.currentBoard.id == 1 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 1)}>LEVEL 1</a></li>
+            <li><a className={this.state.currentBoard.id == 2 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 2)}>LEVEL 2</a></li>
+            <li><a className={this.state.currentBoard.id == 3 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 3)}>LEVEL 3</a></li>
+          </ul>
+        </div>
         <Board data={this.state.currentBoard}/>
       </div>
     );

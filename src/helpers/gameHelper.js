@@ -1,16 +1,16 @@
 export function getIntendedPosition(position, keyCode, arrowCodes){
   switch(keyCode){
     case arrowCodes.right:
-      position.x += 40;
+      position.x += 30;
       break;
     case arrowCodes.up:
-      position.y -= 40;
+      position.y -= 30;
       break;
     case arrowCodes.down:
-      position.y += 40;
+      position.y += 30;
       break;
     case arrowCodes.left:
-      position.x -= 40;
+      position.x -= 30;
       break;
   }
 
@@ -30,10 +30,10 @@ export function arrayArrowCodes() {
 }
 
 export function checkIfEndOfBoard(position){
-  if([320, -40].includes(position.x)){
+  if([450, -30].includes(position.x)){
     return true;
   }
-  if([160, -40].includes(position.y)){
+  if([300, -30].includes(position.y)){
     return true;
   }
   return false;
