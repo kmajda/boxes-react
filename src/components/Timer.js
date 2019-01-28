@@ -9,7 +9,8 @@ export default class Timer extends Component{
       addAnimateClass: true,
       showTimeout: false,
       counter: 20,
-      interval: null
+      interval: null,
+      blockReset: false
     };
 
     this.handleReset = this.handleReset.bind(this);
@@ -18,11 +19,16 @@ export default class Timer extends Component{
   }
   
   handleReset(){
-    clearInterval(this.state.interval)
+    if(this.state.blockReset){
+      return;
+    }
+    
+    clearInterval(this.state.interval);
     let cloneState = {...this.state};
     cloneState.addAnimateClass = false;
     cloneState.showTimeout = false;
     cloneState.counter = 20;
+    cloneState.interval = null;
     this.setState({...cloneState}, () => this.setTimer());
   }
 
@@ -35,14 +41,17 @@ export default class Timer extends Component{
   }
 
   setTimer(){
-    setTimeout(() => {
-      this.props.unBlockBoard();
-      let interval = setInterval(() => {
-        let counter = this.state.counter - 1;
-        this.setState({counter: counter});
-      }, 1000);
-      this.setState({interval: interval});
-    }, 1800);
+    this.setState({blockReset: true}, function () {
+      setTimeout(() => {
+        this.setState({blockReset: false});
+        this.props.unBlockBoard();
+        let interval = setInterval(() => {
+          let counter = this.state.counter - 1;
+          this.setState({counter: counter});
+        }, 1000);
+        this.setState({interval: interval});
+      }, 1800);
+    });
   }
 
   componentDidMount(){
