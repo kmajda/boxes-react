@@ -1,33 +1,59 @@
 import React, { Component } from "react"
 import "../styles/App.css"
 import Board from "./Board"
+import Timer from "./Timer"
 import { getBoards } from "../helpers/gameData"
 import { arrayArrowCodes, arrowCodes, checkIfEndOfBoard, checkIfExit, checkIfBoxIsNear, checkIfBoxIsBlocked, checkIfWallIsNear, getIntendedPosition, getIndexOfNearBox } from "../helpers/gameHelper"
 
 export default class Game extends Component{
   constructor(props){
     super(props);
+    this.child = React.createRef();
 
     this.state = {
-      currentBoard: getBoards()[0]
+      currentBoard: getBoards()[0],
+      showTimer: false,
+      isBoardBlocked: false,
+      isHovering: false
     }
 
     this.handleLevelClick = this.handleLevelClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
     this.movePlayerWithBox = this.movePlayerWithBox.bind(this);
+    this.blockBoard = this.blockBoard.bind(this);
+    this.unBlockBoard = this.unBlockBoard.bind(this);
   }
 
   componentDidMount(){
     window.addEventListener('keyup', this.handleKeyDown);
   }
 
+  blockBoard(){
+    this.setState({isBoardBlocked: true});
+  }
+
+  unBlockBoard(){
+    this.setState({isBoardBlocked: false});
+  }
+
   handleLevelClick(e, id){
     e.preventDefault();
+    let oldBoardId = this.state.currentBoard.id;
     let currentBoard = getBoards().filter(function(board){
       return board.id == id;
     })[0];
-    this.setState({currentBoard: currentBoard});
+    let timerToShow = id == 3 ? true : false;
+    let isBoardBlocked = id == 3 ? true : false;
+    this.setState({
+      currentBoard: currentBoard,
+      showTimer: timerToShow,
+      isBoardBlocked: isBoardBlocked
+    });
+
+    if(id == 3 && oldBoardId == 3){
+      this.child.current.handleReset(); //TODO przerobić na handleResetTimer
+    }
   }
 
   handleKeyDown(e){
@@ -36,7 +62,7 @@ export default class Game extends Component{
     if(!arrayArrowCodes().includes(e.keyCode)){
       return;
     }
-    if(this.state.currentBoard.isFinished){
+    if(this.state.currentBoard.isFinished || this.state.isBoardBlocked){
       return;
     }
 
@@ -85,17 +111,18 @@ export default class Game extends Component{
   }
 
   render(){
+    const timer = this.state.showTimer ? <Timer blockBoard={this.blockBoard} unBlockBoard={this.unBlockBoard} isBoardBlocked={this.state.isBoardBlocked} isFinished={this.state.currentBoard.isFinished} ref={this.child} /> : null;
+    const levels = getBoards().map((board, index) => {
+      return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
+    });
     return(
       <div className="container">
         <div className="nav">
           <h1>Press ARROWS <br/>to move green<br/>boxes and find<br/> a way to exit</h1>
-          <ul>
-            <li><a className={this.state.currentBoard.id == 1 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 1)}>LEVEL 1</a></li>
-            <li><a className={this.state.currentBoard.id == 2 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 2)}>LEVEL 2</a></li>
-            <li><a className={this.state.currentBoard.id == 3 ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, 3)}>LEVEL 3</a></li>
-          </ul>
+          <ul>{levels}</ul>
         </div>
         <Board data={this.state.currentBoard}/>
+        {timer}
       </div>
     );
   }

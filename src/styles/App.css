@@ -41,7 +41,7 @@ body{
     position: relative;
     float: left;
     -webkit-border-radius: 4px;
-    border-radius: 4px
+    border-radius: 4px;
 }
 .container{
     width: 660px;
@@ -57,6 +57,7 @@ body{
     float: right;
     width: 200px;
     height:100%;
+    margin-right: -10px;
 }
 ul{
     height: 65%;
@@ -119,7 +120,18 @@ li a.active{
 .passed-level{
     display: none;
     position: relative;
-    top: 40%;
+    top: 39%;
+    z-index: 3;
+    background-color: #003a00de;
+    padding: 17px 0;
+    font-size: 36px;
+    text-align: center;
+    color: #fffccb;
+}
+.timer-info, .timeout{
+    position: absolute;
+    top: 39%;
+    width:450px;
     z-index: 3;
     background-color: #003a00de;
     padding: 17px 0;
@@ -128,4 +140,26 @@ li a.active{
     color: #fffccb;
 }
 
+.animateTimer{
+    -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
+    -webkit-animation-delay: 1.3s; /* Safari 4.0 - 8.0 */
+    animation-name: example;
+    animation-duration: 0.5s;
+    animation-delay: 1.3s;
+    animation-fill-mode: forwards;
+}
 
+@-webkit-keyframes example {
+    to {
+        top:-14%;
+        left:0%;
+        width: 152px;
+        font-size: 11px;
+        border-radius: 4px;
+        padding: 14px 0;
+        background-color: #FFFF59;
+        color:black;
+        font-weight: 700;
+    }
+}
