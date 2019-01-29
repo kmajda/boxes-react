@@ -10,7 +10,7 @@ class Timer extends Component{
     this.state = {
       addAnimateClass: true,
       showTimeout: false,
-      counter: 20,
+      counter: 15,
       interval: null,
       disableReset: false
     };
@@ -29,7 +29,7 @@ class Timer extends Component{
     let cloneState = {...this.state};
     cloneState.addAnimateClass = false;
     cloneState.showTimeout = false;
-    cloneState.counter = 20;
+    cloneState.counter = 15;
     cloneState.interval = null;
     this.setState({...cloneState}, () => this.setTimer());
   }
