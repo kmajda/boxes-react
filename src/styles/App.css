@@ -146,7 +146,7 @@ li a.active{
     -webkit-animation-delay: 1.3s; /* Safari 4.0 - 8.0 */
     animation-name: example;
     animation-duration: 0.5s;
-    animation-delay: 1.3s;
+    animation-delay: 1.2s;
     animation-fill-mode: forwards;
 }
 

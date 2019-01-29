@@ -66,7 +66,7 @@ export default class Timer extends Component{
       this.manageTimeout();
     }
     if(!this.state.addAnimateClass){
-      setTimeout(() => this.setState({addAnimateClass: true}), 0);
+      setTimeout(() => this.setState({addAnimateClass: true}), 100);
     }
   }
 
