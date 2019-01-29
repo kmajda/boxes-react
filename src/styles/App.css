@@ -1,6 +1,6 @@
 body{
     font-family: 'Quattrocento', serif;
-    background-color: #151b0cf5;
+    background-color: rgb(21, 27, 12);
 }
 
 .box, .wall, .exit {
@@ -122,7 +122,7 @@ li a.active{
     position: relative;
     top: 39%;
     z-index: 3;
-    background-color: #003a00de;
+    background-color: rgba(0, 58, 0, 0.9);
     padding: 17px 0;
     font-size: 36px;
     text-align: center;
@@ -133,7 +133,7 @@ li a.active{
     top: 39%;
     width:450px;
     z-index: 3;
-    background-color: #003a00de;
+    background-color: rgba(0, 58, 0, 0.9);
     padding: 17px 0;
     font-size: 36px;
     text-align: center;
@@ -158,7 +158,7 @@ li a.active{
         font-size: 11px;
         border-radius: 4px;
         padding: 14px 0;
-        background-color: #FFFF59;
+        background-color: rgb(255, 255, 89);
         color:black;
         font-weight: 700;
     }
