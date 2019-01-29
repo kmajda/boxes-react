@@ -1,7 +1,9 @@
 import React, { Component } from "react"
+import { connect } from "react-redux"
 import "../styles/App.css"
+import { blockBoard, unBlockBoard } from "../actions/index"
 
-export default class Timer extends Component{
+class Timer extends Component{
   constructor(props) {
     super(props);
 
@@ -10,7 +12,7 @@ export default class Timer extends Component{
       showTimeout: false,
       counter: 20,
       interval: null,
-      blockReset: false
+      disableReset: false
     };
 
     this.handleReset = this.handleReset.bind(this);
@@ -19,7 +21,7 @@ export default class Timer extends Component{
   }
   
   handleReset(){
-    if(this.state.blockReset){
+    if(this.state.disableReset){
       return;
     }
     
@@ -41,9 +43,9 @@ export default class Timer extends Component{
   }
 
   setTimer(){
-    this.setState({blockReset: true}, function () {
+    this.setState({disableReset: true}, function () {
       setTimeout(() => {
-        this.setState({blockReset: false});
+        this.setState({disableReset: false});
         this.props.unBlockBoard();
         let interval = setInterval(() => {
           let counter = this.state.counter - 1;
@@ -77,7 +79,6 @@ export default class Timer extends Component{
   render(){
     const animateClass = this.state.addAnimateClass ? 'animateTimer' : '';
     const timeout = this.state.showTimeout ? <div className="timeout">TIMEOUT!</div> : null;
-
     return(
       <div>
         <div className={'timer-info ' + animateClass}>YOU HAVE {this.state.counter} SECONDS!</div>
@@ -86,3 +87,13 @@ export default class Timer extends Component{
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {isBoardBlocked: state.board.isBoardBlocked};
+};
+const mapDispatchToProps = dispatch => ({
+  blockBoard: () => {dispatch(blockBoard())},
+  unBlockBoard: () => {dispatch(unBlockBoard())}
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(Timer);

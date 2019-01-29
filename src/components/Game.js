@@ -1,11 +1,13 @@
 import React, { Component } from "react"
+import { connect } from "react-redux"
 import "../styles/App.css"
 import Board from "./Board"
 import Timer from "./Timer"
 import { getBoards } from "../helpers/gameData"
 import { arrayArrowCodes, arrowCodes, checkIfEndOfBoard, checkIfExit, checkIfBoxIsNear, checkIfBoxIsBlocked, checkIfWallIsNear, getIntendedPosition, getIndexOfNearBox } from "../helpers/gameHelper"
+import { blockBoard, unBlockBoard } from "../actions/index"
 
-export default class Game extends Component{
+class Game extends Component{
   constructor(props){
     super(props);
     this.child = React.createRef();
@@ -13,7 +15,6 @@ export default class Game extends Component{
     this.state = {
       currentBoard: getBoards()[0],
       showTimer: false,
-      isBoardBlocked: false,
       isHovering: false
     }
 
@@ -21,20 +22,10 @@ export default class Game extends Component{
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
     this.movePlayerWithBox = this.movePlayerWithBox.bind(this);
-    this.blockBoard = this.blockBoard.bind(this);
-    this.unBlockBoard = this.unBlockBoard.bind(this);
   }
 
   componentDidMount(){
     window.addEventListener('keyup', this.handleKeyDown);
-  }
-
-  blockBoard(){
-    this.setState({isBoardBlocked: true});
-  }
-
-  unBlockBoard(){
-    this.setState({isBoardBlocked: false});
   }
 
   handleLevelClick(e, id){
@@ -44,11 +35,15 @@ export default class Game extends Component{
       return board.id == id;
     })[0];
     let timerToShow = id == 3 ? true : false;
-    let isBoardBlocked = id == 3 ? true : false;
+    if(id == 3){
+      this.props.blockBoard();
+    }else{
+      this.props.unBlockBoard();
+    }
+
     this.setState({
       currentBoard: currentBoard,
-      showTimer: timerToShow,
-      isBoardBlocked: isBoardBlocked
+      showTimer: timerToShow
     });
 
     if(id == 3 && oldBoardId == 3){
@@ -62,7 +57,7 @@ export default class Game extends Component{
     if(!arrayArrowCodes().includes(e.keyCode)){
       return;
     }
-    if(this.state.currentBoard.isFinished || this.state.isBoardBlocked){
+    if(this.state.currentBoard.isFinished || this.props.isBoardBlocked){
       return;
     }
 
@@ -111,7 +106,7 @@ export default class Game extends Component{
   }
 
   render(){
-    const timer = this.state.showTimer ? <Timer blockBoard={this.blockBoard} unBlockBoard={this.unBlockBoard} isBoardBlocked={this.state.isBoardBlocked} isFinished={this.state.currentBoard.isFinished} ref={this.child} /> : null;
+    const timer = this.state.showTimer ? <Timer isFinished={this.state.currentBoard.isFinished} ref={this.child} /> : null;
     const levels = getBoards().map((board, index) => {
       return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
     });
@@ -127,3 +122,13 @@ export default class Game extends Component{
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {isBoardBlocked: state.board.isBoardBlocked};
+};
+const mapDispatchToProps = dispatch => ({
+  blockBoard: () => {dispatch(blockBoard())},
+  unBlockBoard: () => {dispatch(unBlockBoard())}
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
