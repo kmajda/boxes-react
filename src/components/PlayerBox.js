@@ -12,7 +12,7 @@ export default class PlayerBox extends Component{
     }
 
     return(
-      <div className="box player-box"
+      <div className="player-box"
            style={style}>Me
       </div>
     )

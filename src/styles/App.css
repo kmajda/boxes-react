@@ -3,7 +3,7 @@ body{
     background-color: rgb(21, 27, 12);
 }
 
-.box, .wall, .exit {
+.box, .wall, .exit, .player-box {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -19,7 +19,7 @@ body{
 .box{
     background-color: #54912D;
 }
-.box.player-box {
+.player-box {
     background-color: #1F5A7A;
     color: white;
     font-size: 12px;
