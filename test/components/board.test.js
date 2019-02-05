@@ -18,15 +18,19 @@ describe('<Board/>', () => {
   });
 
   it('should render boxes', () => {
-    expect(wrapper.find('.box')).to.have.lengthOf(22);
+    expect(wrapper.find('.box')).to.have.lengthOf(1);
   });
 
   it('should render walls', () => {
-    expect(wrapper.find('.wall')).to.have.lengthOf(39);
+    expect(wrapper.find('.wall')).to.have.lengthOf(2);
   });
   
   it('should render board', () => {
     expect(wrapper.find('.board')).to.have.lengthOf(1);
+  });
+
+  it('should render exit', () => {
+    expect(wrapper.find('.exit')).to.have.lengthOf(1);
   });
 })
 
