@@ -19,13 +19,13 @@ class Game extends Component{
     }
 
     this.handleLevelClick = this.handleLevelClick.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
     this.movePlayerWithBox = this.movePlayerWithBox.bind(this);
   }
 
   componentDidMount(){
-    window.addEventListener('keyup', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
   }
 
   handleLevelClick(e, id){
@@ -51,7 +51,7 @@ class Game extends Component{
     }
   }
 
-  handleKeyDown(e){
+  handleKeyUp(e){
     e.preventDefault();
 
     if(!arrayArrowCodes().includes(e.keyCode)){
