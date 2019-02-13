@@ -65,16 +65,16 @@ export function checkIfBoxIsNear(position, boxes){
 }
 
 export function checkIfBoxIsBlocked(position, boxes, walls, exit){
-  if(checkIfEndOfBoard(position)){
+  if(this.checkIfEndOfBoard(position)){
     return true;
   }
-  if(checkIfWallIsNear(position, walls)){
+  if(this.checkIfWallIsNear(position, walls)){
     return true;
   }
-  if(checkIfBoxIsNear(position, boxes)){
+  if(this.checkIfBoxIsNear(position, boxes)){
     return true;
   }
-  if(checkIfExit(position, exit)){
+  if(this.checkIfExit(position, exit)){
     return true;
   }
 

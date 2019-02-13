@@ -4,7 +4,7 @@ import "../styles/App.css"
 import Board from "./Board"
 import Timer from "./Timer"
 import { getBoards } from "../helpers/gameData"
-import { arrayArrowCodes, arrowCodes, checkIfEndOfBoard, checkIfExit, checkIfBoxIsNear, checkIfBoxIsBlocked, checkIfWallIsNear, getIntendedPosition, getIndexOfNearBox } from "../helpers/gameHelper"
+import * as gameHelper from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
 
 class Game extends Component{
@@ -54,26 +54,26 @@ class Game extends Component{
   handleKeyUp(e){
     e.preventDefault();
 
-    if(!arrayArrowCodes().includes(e.keyCode)){
+    if(!gameHelper.arrayArrowCodes().includes(e.keyCode)){
       return;
     }
     if(this.state.currentBoard.isFinished || this.props.isBoardBlocked){
       return;
     }
 
-    let intendedPlayerPosition = getIntendedPosition({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
+    let intendedPlayerPosition = gameHelper.getIntendedPosition({...this.state.currentBoard.player}, e.keyCode, gameHelper.arrowCodes())
 
-    if(checkIfEndOfBoard(intendedPlayerPosition)){
+    if(gameHelper.checkIfEndOfBoard(intendedPlayerPosition)){
       return;
     }
-    if(checkIfWallIsNear(intendedPlayerPosition, this.state.currentBoard.walls)){
+    if(gameHelper.checkIfWallIsNear(intendedPlayerPosition, this.state.currentBoard.walls)){
       return;
     }
 
-    let indexOfNearBox = getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
+    let indexOfNearBox = gameHelper.getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
     if(indexOfNearBox != null){
-      let intendedBoxPosition = getIntendedPosition({...intendedPlayerPosition}, e.keyCode, arrowCodes())
-      if(checkIfBoxIsBlocked(intendedBoxPosition, this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)){
+      let intendedBoxPosition = gameHelper.getIntendedPosition({...intendedPlayerPosition}, e.keyCode, gameHelper.arrowCodes())
+      if(gameHelper.checkIfBoxIsBlocked(intendedBoxPosition, this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)){
         return;
       }
       else{
@@ -83,7 +83,7 @@ class Game extends Component{
     }
 
     this.movePlayer(intendedPlayerPosition);
-    if(checkIfExit(this.state.currentBoard.player, this.state.currentBoard.exit)){
+    if(gameHelper.checkIfExit(this.state.currentBoard.player, this.state.currentBoard.exit)){
       let cloneState = {...this.state};
       cloneState.currentBoard.isFinished = true;
       this.setState({...cloneState});
