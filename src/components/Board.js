@@ -20,7 +20,7 @@ export default class Board extends Component{
         <div className="passed-level" style={this.props.data.isFinished ? {display: 'block'} : {}}>LEVEL {this.props.data.id} PASSED!</div>
         {boxes}
         {walls}
-        <div className="exit" style={{left: this.props.data.exit[0], top: this.props.data.exit[1]}}>Exit</div>
+        <div className="exit" style={{left: this.props.data.exit[0][0], top: this.props.data.exit[0][1]}}>Exit</div>
         <PlayerBox player={this.props.data.player} />
       </div>
     );

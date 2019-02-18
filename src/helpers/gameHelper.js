@@ -39,46 +39,22 @@ export function checkIfEndOfBoard(position){
   return false;
 }
 
-export function checkIfWallIsNear(position, walls){
-  let result = walls.some(function(wall){
-    if(wall[0] == position.x && wall[1] == position.y){
+export const checkObstaclesWithAddition = (obstacleCallback) => {
+  return (position, obstacles, additionCallback) => {
+    if(additionCallback(position)){
+      return true;
+    }
+    return obstacleCallback(position, obstacles);
+  }
+}
+
+export function checkObstacles(position, obstacles){
+  let result = obstacles.some(function(obstacle){
+    if(obstacle[0] == position.x && obstacle[1] == position.y){
       return true;
     }
   });
   return result;
-}
-
-export function checkIfExit(position, exit){
-  if(position.x == exit[0] && position.y == exit[1]){
-    return true;
-  }
-  return false;
-}
-
-export function checkIfBoxIsNear(position, boxes){
-  let result = boxes.some(function(box){
-    if(box[0] == position.x && box[1] == position.y){
-      return true;
-    }
-  });
-  return result;
-}
-
-export function checkIfBoxIsBlocked(position, boxes, walls, exit){
-  if(this.checkIfEndOfBoard(position)){
-    return true;
-  }
-  if(this.checkIfWallIsNear(position, walls)){
-    return true;
-  }
-  if(this.checkIfBoxIsNear(position, boxes)){
-    return true;
-  }
-  if(this.checkIfExit(position, exit)){
-    return true;
-  }
-
-  return false;
 }
 
 export function getIndexOfNearBox(position, boxes){
@@ -91,3 +67,5 @@ export function getIndexOfNearBox(position, boxes){
   })
   return indexOfNearBox;
 }
+
+export const mergeObstacles = (boxes, walls, exit) => [...boxes, ...walls, ...exit]

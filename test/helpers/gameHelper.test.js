@@ -1,12 +1,11 @@
-// import {getIntendedPosition, arrowCodes, checkIfEndOfBoard, checkIfWallIsNear, checkIfExit, checkIfBoxIsNear, checkIfBoxIsBlocked} from '../../src/helpers/gameHelper'
-import * as gameHelper from '../../src/helpers/gameHelper'
+import { getIntendedPosition, checkIfEndOfBoard, arrowCodes, checkObstacles, checkObstaclesWithAddition } from '../../src/helpers/gameHelper'
 import {expect} from 'chai'
 import sinon from 'sinon'
 
 describe('gameHelper', () => {
   describe('.getIntendedPosition', () => {
     let position;
-    let arrows = gameHelper.arrowCodes();
+    let arrows = arrowCodes();
 
     beforeEach(() => {
       position = {x: 60, y: 30};
@@ -14,28 +13,28 @@ describe('gameHelper', () => {
 
     context('when moving right', () => {
       it('returns proper calculated position', () => {
-        const result = gameHelper.getIntendedPosition(position, 39, arrows);
+        const result = getIntendedPosition(position, 39, arrows);
         expect(result).to.deep.equal({x: 90, y:30});
       })
     });
 
     context('when moving left', () => {
       it('returns proper calculated position', () => {
-        const result = gameHelper.getIntendedPosition(position, 37, arrows);
+        const result = getIntendedPosition(position, 37, arrows);
         expect(result).to.deep.equal({x: 30, y:30});
       })
     });
 
     context('when moving up', () => {
       it('returns proper calculated position', () => {
-        const result = gameHelper.getIntendedPosition(position, 38, arrows);
+        const result = getIntendedPosition(position, 38, arrows);
         expect(result).to.deep.equal({x: 60, y:0});
       })
     });
 
     context('when moving down', () => {
       it('returns proper calculated position', () => {
-        const result = gameHelper.getIntendedPosition(position, 40, arrows);
+        const result = getIntendedPosition(position, 40, arrows);
         expect(result).to.deep.equal({x: 60, y:60});
       })
     });
@@ -45,121 +44,87 @@ describe('gameHelper', () => {
     context('when end of board', () => {
       context('when reaching right border', () => {
         it('returns true', () => {
-          expect(gameHelper.checkIfEndOfBoard({x: 450, y: 0})).to.be.true;
+          expect(checkIfEndOfBoard({x: 450, y: 0})).to.be.true;
         });
       });
 
       context('when reaching left border', () => {
         it('returns true', () => {
-          expect(gameHelper.checkIfEndOfBoard({x: -30, y: 0})).to.be.true;
+          expect(checkIfEndOfBoard({x: -30, y: 0})).to.be.true;
         });
       });
 
       context('when reaching top border', () => {
         it('returns true', () => {
-          expect(gameHelper.checkIfEndOfBoard({x: 0, y: -30})).to.be.true;
+          expect(checkIfEndOfBoard({x: 0, y: -30})).to.be.true;
         });
       });
 
       context('when reaching bottom border', () => {
         it('returns true', () => {
-          expect(gameHelper.checkIfEndOfBoard({x: 0, y: 300})).to.be.true;
+          expect(checkIfEndOfBoard({x: 0, y: 300})).to.be.true;
         });
       });
     });
 
     context('when not end of board', () => {
       it('returns false', () => {
-        expect(gameHelper.checkIfEndOfBoard({x: 0, y: 0})).to.be.false;
+        expect(checkIfEndOfBoard({x: 0, y: 0})).to.be.false;
       });
     })
   });
 
-  describe('.checkIfWallIsNear', () => {
+  describe('.checkObstacles', () => {
     let position;
-    const walls = [[0,0], [60,60], [0,90]];
+    const obstacles = [[0,0], [60,60], [0,90]];
 
-    context('when wall is near', () => {
+    context('when obstacle is near', () => {
       before(() => {position = {x: 60, y: 60}});
 
       it('returns true', () => {
-        expect(gameHelper.checkIfWallIsNear(position, walls)).to.be.true;
+        expect(checkObstacles(position, obstacles)).to.be.true;
       });
     });
 
-    context('when wall is not near', () => {
+    context('when obstacle is not near', () => {
       before(() => {position = {x: 60, y: 90}});
 
       it('returns null', () => {
-        expect(gameHelper.checkIfWallIsNear(position, walls)).to.be.false;
+        expect(checkObstacles(position, obstacles)).to.be.false;
       });
     });
   });
 
-  describe('.checkIfExit', () => {
+  describe('checkObstaclesWithAddition', () => {
     let position;
-    const exit = [60,60];
+    const obstacles = [[0,0], [60,60], [0,90]];
 
-    context('when inside exit', () => {
+    context('when additional callback returns true', () => {
       before(() => {position = {x: 60, y: 60}});
 
-      it('returns true', () => {
-        expect(gameHelper.checkIfExit(position, exit)).to.be.true;
-      });
-    });
+      it('returns true and obstacle callback not called', () => {
+        let obstacleCallback = sinon.stub();
+        let additionCallback = sinon.stub().returns(true);
+        const result = checkObstaclesWithAddition(obstacleCallback)(position, obstacles, additionCallback)
 
-    context('when not inside exit', () => {
-      before(() => {position = {x: 60, y: 90}});
+        expect(result).to.be.true;
+        expect(obstacleCallback.called).to.be.false;
+        expect(additionCallback.getCall(0).args).to.deep.equal([position]);
+      })
+    })
 
-      it('returns null', () => {
-        expect(gameHelper.checkIfExit(position, exit)).to.be.false;
-      });
-    });
-  });
-
-  describe('.checkIfBoxIsNear', () => {
-    let position;
-    const boxes = [[0,0], [60,60], [0,90]];
-
-    context('when box is near', () => {
+    context('when additional callback returns false', () => {
       before(() => {position = {x: 60, y: 60}});
 
-      it('returns true', () => {
-        expect(gameHelper.checkIfBoxIsNear(position, boxes)).to.be.true;
-      });
-    });
+      it('returns obstacle callback result and assert callback called with proper arguments', () => {
+        let obstacleCallback = sinon.stub().returns(true);
+        let additionCallback = sinon.stub().returns(false);
+        const result = checkObstaclesWithAddition(obstacleCallback)(position, obstacles, additionCallback)
 
-    context('when box is not near', () => {
-      before(() => {position = {x: 60, y: 90}});
-
-      it('returns null', () => {
-        expect(gameHelper.checkIfBoxIsNear(position, boxes)).to.be.false;
-      });
-    });
-  });
-
-  describe('.checkIfBoxIsBlocked', () => {
-
-    context('when box is blocked', () => {
-      it('returns true', () => {
-        let stub = sinon.stub(gameHelper, 'checkIfEndOfBoard').returns(true);
-        expect(gameHelper.checkIfBoxIsBlocked()).to.be.true;
-        stub.restore();
-      });
-    });
-
-    context('when box is not blocked', () => {
-      it('returns false', () => {
-        let stub1 = sinon.stub(gameHelper, 'checkIfEndOfBoard').returns(false);
-        let stub2 = sinon.stub(gameHelper, 'checkIfWallIsNear').returns(false);
-        let stub3 = sinon.stub(gameHelper, 'checkIfBoxIsNear').returns(false);
-        let stub4 = sinon.stub(gameHelper, 'checkIfExit').returns(false);
-        expect(gameHelper.checkIfBoxIsBlocked()).to.be.false;
-        stub1.restore();
-        stub2.restore();
-        stub3.restore();
-        stub4.restore();
-      });
-    });
-  });
+        expect(result).to.be.true;
+        expect(additionCallback.getCall(0).args).to.deep.equal([position]);
+        expect(obstacleCallback.getCall(0).args).to.deep.equal([position, obstacles]);
+      })
+    })
+  })
 });

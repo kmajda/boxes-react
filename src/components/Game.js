@@ -4,7 +4,7 @@ import "../styles/App.css"
 import Board from "./Board"
 import Timer from "./Timer"
 import { getBoards } from "../helpers/gameData"
-import * as gameHelper from "../helpers/gameHelper"
+import {arrowCodes, arrayArrowCodes, checkObstaclesWithAddition, getIntendedPosition, checkObstacles, checkIfEndOfBoard, getIndexOfNearBox, mergeObstacles} from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
 
 class Game extends Component{
@@ -54,26 +54,25 @@ class Game extends Component{
   handleKeyUp(e){
     e.preventDefault();
 
-    if(!gameHelper.arrayArrowCodes().includes(e.keyCode)){
+    if(!arrayArrowCodes().includes(e.keyCode)){
       return;
     }
     if(this.state.currentBoard.isFinished || this.props.isBoardBlocked){
       return;
     }
 
-    let intendedPlayerPosition = gameHelper.getIntendedPosition({...this.state.currentBoard.player}, e.keyCode, gameHelper.arrowCodes())
-
-    if(gameHelper.checkIfEndOfBoard(intendedPlayerPosition)){
-      return;
-    }
-    if(gameHelper.checkIfWallIsNear(intendedPlayerPosition, this.state.currentBoard.walls)){
+    let intendedPlayerPosition = getIntendedPosition({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
+ 
+    if(checkObstaclesWithAddition(checkObstacles)(intendedPlayerPosition, this.state.currentBoard.walls, checkIfEndOfBoard)){
       return;
     }
 
-    let indexOfNearBox = gameHelper.getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
+    let indexOfNearBox = getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
     if(indexOfNearBox != null){
-      let intendedBoxPosition = gameHelper.getIntendedPosition({...intendedPlayerPosition}, e.keyCode, gameHelper.arrowCodes())
-      if(gameHelper.checkIfBoxIsBlocked(intendedBoxPosition, this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)){
+      let intendedBoxPosition = getIntendedPosition({...intendedPlayerPosition}, e.keyCode, arrowCodes())
+      let obstaclesMerged = mergeObstacles(this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)
+
+      if(checkObstaclesWithAddition(checkObstacles)(intendedBoxPosition, obstaclesMerged, checkIfEndOfBoard)){
         return;
       }
       else{
@@ -83,7 +82,7 @@ class Game extends Component{
     }
 
     this.movePlayer(intendedPlayerPosition);
-    if(gameHelper.checkIfExit(this.state.currentBoard.player, this.state.currentBoard.exit)){
+    if(checkObstacles(this.state.currentBoard.player, this.state.currentBoard.exit)){
       let cloneState = {...this.state};
       cloneState.currentBoard.isFinished = true;
       this.setState({...cloneState});
