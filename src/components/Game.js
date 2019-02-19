@@ -88,14 +88,12 @@ class Game extends Component{
       cloneState.currentBoard.player = positions.player;
       cloneState.currentBoard.boxes[boxIndex][0] = positions.box.x;
       cloneState.currentBoard.boxes[boxIndex][1] = positions.box.y;
-
-      this.setState({...cloneState});
     }
     else{
       cloneState.currentBoard.player = positions.player;
-      this.setState({...cloneState});
     }
 
+    this.setState({...cloneState});
   }
 
   checkIfFinish(obstaclesCallback, state){
