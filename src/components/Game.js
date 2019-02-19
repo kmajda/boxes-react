@@ -4,7 +4,7 @@ import "../styles/App.css"
 import Board from "./Board"
 import Timer from "./Timer"
 import { getBoards } from "../helpers/gameData"
-import {arrowCodes, arrayArrowCodes, checkObstaclesWithAddition, getIntendedPosition, checkObstacles, checkIfEndOfBoard, getIndexOfNearBox, mergeObstacles} from "../helpers/gameHelper"
+import {arrowCodes, arrayArrowCodes, checkObstaclesWithAddition, checkBoxes, getIntendedPositions, checkObstacles, checkIfEndOfBoard, mergeObstacles, withBoxCheck} from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
 
 class Game extends Component{
@@ -21,7 +21,7 @@ class Game extends Component{
     this.handleLevelClick = this.handleLevelClick.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
-    this.movePlayerWithBox = this.movePlayerWithBox.bind(this);
+    this.checkIfFinish = this.checkIfFinish.bind(this);
   }
 
   componentDidMount(){
@@ -60,48 +60,50 @@ class Game extends Component{
     if(this.state.currentBoard.isFinished || this.props.isBoardBlocked){
       return;
     }
-
-    let intendedPlayerPosition = getIntendedPosition({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
- 
-    if(checkObstaclesWithAddition(checkObstacles)(intendedPlayerPosition, this.state.currentBoard.walls, checkIfEndOfBoard)){
+    
+    let intendedPositions = getIntendedPositions({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
+    
+    if(checkObstaclesWithAddition(checkObstacles)(intendedPositions.player, this.state.currentBoard.walls, checkIfEndOfBoard)){
       return;
     }
 
-    let indexOfNearBox = getIndexOfNearBox(intendedPlayerPosition, this.state.currentBoard.boxes);
-    if(indexOfNearBox != null){
-      let intendedBoxPosition = getIntendedPosition({...intendedPlayerPosition}, e.keyCode, arrowCodes())
-      let obstaclesMerged = mergeObstacles(this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)
+    let obstaclesMerged = mergeObstacles(this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)
+    
+    let tryMovePlayer = withBoxCheck(this.movePlayer, checkBoxes, checkObstacles, checkObstaclesWithAddition, checkIfEndOfBoard);
+    if(!tryMovePlayer(intendedPositions, this.state.currentBoard.boxes, obstaclesMerged)){
+      return;
+    }
+    
+    this.checkIfFinish(checkObstacles, this.state)
+  }
 
-      if(checkObstaclesWithAddition(checkObstacles)(intendedBoxPosition, obstaclesMerged, checkIfEndOfBoard)){
-        return;
-      }
-      else{
-        this.movePlayerWithBox(intendedPlayerPosition, intendedBoxPosition, indexOfNearBox);
-        return;
-      }
+  movePlayer(positions, withBox){
+    let cloneState = {...this.state};
+    
+    if(withBox){
+      let boxIndex = cloneState.currentBoard.boxes.findIndex((box) => {
+        return box[0] == positions.player.x && box[1] == positions.player.y
+      })
+      
+      cloneState.currentBoard.player = positions.player;
+      cloneState.currentBoard.boxes[boxIndex][0] = positions.box.x;
+      cloneState.currentBoard.boxes[boxIndex][1] = positions.box.y;
+
+      this.setState({...cloneState});
+    }
+    else{
+      cloneState.currentBoard.player = positions.player;
+      this.setState({...cloneState});
     }
 
-    this.movePlayer(intendedPlayerPosition);
-    if(checkObstacles(this.state.currentBoard.player, this.state.currentBoard.exit)){
-      let cloneState = {...this.state};
+  }
+
+  checkIfFinish(obstaclesCallback, state){
+    if(obstaclesCallback(state.currentBoard.player, state.currentBoard.exit)){
+      let cloneState = {...state};
       cloneState.currentBoard.isFinished = true;
       this.setState({...cloneState});
     }
-  }
-
-  movePlayer(position){
-    let cloneState = {...this.state};
-    cloneState.currentBoard.player = position;
-    this.setState({...cloneState});
-  }
-
-  movePlayerWithBox(playerPosition, boxPosition, boxIndex){
-    let cloneState = {...this.state};
-    cloneState.currentBoard.player = playerPosition;
-    cloneState.currentBoard.boxes[boxIndex][0] = boxPosition.x;
-    cloneState.currentBoard.boxes[boxIndex][1] = boxPosition.y;
-
-    this.setState({...cloneState});
   }
 
   render(){

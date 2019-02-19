@@ -1,9 +1,9 @@
-import { getIntendedPosition, checkIfEndOfBoard, arrowCodes, checkObstacles, checkObstaclesWithAddition } from '../../src/helpers/gameHelper'
+import { getIntendedPositions, checkIfEndOfBoard, arrowCodes, checkObstacles, checkObstaclesWithAddition } from '../../src/helpers/gameHelper'
 import {expect} from 'chai'
 import sinon from 'sinon'
 
 describe('gameHelper', () => {
-  describe('.getIntendedPosition', () => {
+  describe('.getIntendedPositions', () => {
     let position;
     let arrows = arrowCodes();
 
@@ -13,29 +13,29 @@ describe('gameHelper', () => {
 
     context('when moving right', () => {
       it('returns proper calculated position', () => {
-        const result = getIntendedPosition(position, 39, arrows);
-        expect(result).to.deep.equal({x: 90, y:30});
+        const result = getIntendedPositions(position, 39, arrows);
+        expect(result).to.deep.equal( {player: {x: 90, y:30}, box: {x: 120, y: 30} } );
       })
     });
 
     context('when moving left', () => {
       it('returns proper calculated position', () => {
-        const result = getIntendedPosition(position, 37, arrows);
-        expect(result).to.deep.equal({x: 30, y:30});
+        const result = getIntendedPositions(position, 37, arrows);
+        expect(result).to.deep.equal({player: {x: 30, y:30}, box: {x: 0, y: 30}});
       })
     });
 
     context('when moving up', () => {
       it('returns proper calculated position', () => {
-        const result = getIntendedPosition(position, 38, arrows);
-        expect(result).to.deep.equal({x: 60, y:0});
+        const result = getIntendedPositions(position, 38, arrows);
+        expect(result).to.deep.equal({player: {x: 60, y:0}, box: {x: 60, y: -30}});
       })
     });
 
     context('when moving down', () => {
       it('returns proper calculated position', () => {
-        const result = getIntendedPosition(position, 40, arrows);
-        expect(result).to.deep.equal({x: 60, y:60});
+        const result = getIntendedPositions(position, 40, arrows);
+        expect(result).to.deep.equal({player: {x: 60, y:60}, box: {x: 60, y: 90}});
       })
     });
   });
