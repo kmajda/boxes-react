@@ -78,7 +78,7 @@ class Game extends Component{
       }
     }
     state.currentBoard.player = intendedPositions.player;
-    this.setState({...state}); // TODO
+    this.setState(state);
   }
 
   render(){
