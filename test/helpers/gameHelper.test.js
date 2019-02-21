@@ -1,6 +1,5 @@
-import { getIntendedPositions, checkIfEndOfBoard, arrowCodes, checkObstacles, checkObstaclesWithAddition } from '../../src/helpers/gameHelper'
+import { getIntendedPositions, arrowCodes, checkObstacles } from '../../src/helpers/gameHelper'
 import {expect} from 'chai'
-import sinon from 'sinon'
 
 describe('gameHelper', () => {
   describe('.getIntendedPositions', () => {
@@ -40,91 +39,29 @@ describe('gameHelper', () => {
     });
   });
 
-  describe('.checkIfEndOfBoard', () => {
-    context('when end of board', () => {
-      context('when reaching right border', () => {
-        it('returns true', () => {
-          expect(checkIfEndOfBoard({x: 450, y: 0})).to.be.true;
-        });
-      });
-
-      context('when reaching left border', () => {
-        it('returns true', () => {
-          expect(checkIfEndOfBoard({x: -30, y: 0})).to.be.true;
-        });
-      });
-
-      context('when reaching top border', () => {
-        it('returns true', () => {
-          expect(checkIfEndOfBoard({x: 0, y: -30})).to.be.true;
-        });
-      });
-
-      context('when reaching bottom border', () => {
-        it('returns true', () => {
-          expect(checkIfEndOfBoard({x: 0, y: 300})).to.be.true;
-        });
-      });
-    });
-
-    context('when not end of board', () => {
-      it('returns false', () => {
-        expect(checkIfEndOfBoard({x: 0, y: 0})).to.be.false;
-      });
-    })
-  });
-
   describe('.checkObstacles', () => {
-    let position;
-    const obstacles = [[0,0], [60,60], [0,90]];
+    let obstacles = {
+      exit: [[0,0]],
+      box: [[180,180],[120,60],[210,210]],
+      wall: [[30,60]],
+      border: [[-30,60]],
+    }
 
-    context('when obstacle is near', () => {
-      before(() => {position = {x: 60, y: 60}});
-
-      it('returns true', () => {
-        expect(checkObstacles(position, obstacles)).to.be.true;
-      });
-    });
-
-    context('when obstacle is not near', () => {
-      before(() => {position = {x: 60, y: 90}});
+    context('when no obstacles', () => {
+      let intendedPosition = {x: 60, y: 60}
 
       it('returns null', () => {
-        expect(checkObstacles(position, obstacles)).to.be.false;
+        expect(checkObstacles(intendedPosition, obstacles)).to.be.null;
+      });
+    });
+
+    context('when box obstacle', () => {
+      let intendedPosition = {x: 120, y: 60}
+
+      it('returns proper result', () => {
+        let expectedResult ={type: 'box', index: 1}
+        expect(checkObstacles(intendedPosition, obstacles)).to.deep.equal(expectedResult);
       });
     });
   });
-
-  describe('checkObstaclesWithAddition', () => {
-    let position;
-    const obstacles = [[0,0], [60,60], [0,90]];
-
-    context('when additional callback returns true', () => {
-      before(() => {position = {x: 60, y: 60}});
-
-      it('returns true and obstacle callback not called', () => {
-        let obstacleCallback = sinon.stub();
-        let additionCallback = sinon.stub().returns(true);
-        const result = checkObstaclesWithAddition(obstacleCallback)(position, obstacles, additionCallback)
-
-        expect(result).to.be.true;
-        expect(obstacleCallback.called).to.be.false;
-        expect(additionCallback.getCall(0).args).to.deep.equal([position]);
-      })
-    })
-
-    context('when additional callback returns false', () => {
-      before(() => {position = {x: 60, y: 60}});
-
-      it('returns obstacle callback result and assert callback called with proper arguments', () => {
-        let obstacleCallback = sinon.stub().returns(true);
-        let additionCallback = sinon.stub().returns(false);
-        const result = checkObstaclesWithAddition(obstacleCallback)(position, obstacles, additionCallback)
-
-        expect(result).to.be.true;
-        expect(additionCallback.getCall(0).args).to.deep.equal([position]);
-        expect(obstacleCallback.getCall(0).args).to.deep.equal([position, obstacles]);
-      })
-    })
-  })
 });

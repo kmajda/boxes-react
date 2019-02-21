@@ -3,8 +3,8 @@ import { connect } from "react-redux"
 import "../styles/App.css"
 import Board from "./Board"
 import Timer from "./Timer"
-import { getBoards } from "../helpers/gameData"
-import {arrowCodes, arrayArrowCodes, checkObstaclesWithAddition, checkBoxes, getIntendedPositions, checkObstacles, checkIfEndOfBoard, mergeObstacles, withBoxCheck} from "../helpers/gameHelper"
+import { getBoards, obstacleTypes } from "../helpers/gameData"
+import {arrowCodes, arrayArrowCodes, tryMove, getIntendedPositions, checkObstacles} from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
 
 class Game extends Component{
@@ -20,8 +20,7 @@ class Game extends Component{
 
     this.handleLevelClick = this.handleLevelClick.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
-    this.movePlayer = this.movePlayer.bind(this);
-    this.checkIfFinish = this.checkIfFinish.bind(this);
+    this.move = this.move.bind(this);
   }
 
   componentDidMount(){
@@ -62,46 +61,22 @@ class Game extends Component{
     }
     
     let intendedPositions = getIntendedPositions({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
-    
-    if(checkObstaclesWithAddition(checkObstacles)(intendedPositions.player, this.state.currentBoard.walls, checkIfEndOfBoard)){
-      return;
-    }
-
-    let obstaclesMerged = mergeObstacles(this.state.currentBoard.boxes, this.state.currentBoard.walls, this.state.currentBoard.exit)
-    
-    let tryMovePlayer = withBoxCheck(this.movePlayer, checkBoxes, checkObstacles, checkObstaclesWithAddition, checkIfEndOfBoard);
-    if(!tryMovePlayer(intendedPositions, this.state.currentBoard.boxes, obstaclesMerged)){
-      return;
-    }
-    
-    this.checkIfFinish(checkObstacles, this.state)
+   
+    tryMove(intendedPositions, this.state.currentBoard.obstacles, this.state, checkObstacles, this.move)
   }
 
-  movePlayer(positions, withBox){
-    let cloneState = {...this.state};
-    
-    if(withBox){
-      let boxIndex = cloneState.currentBoard.boxes.findIndex((box) => {
-        return box[0] == positions.player.x && box[1] == positions.player.y
-      })
-      
-      cloneState.currentBoard.player = positions.player;
-      cloneState.currentBoard.boxes[boxIndex][0] = positions.box.x;
-      cloneState.currentBoard.boxes[boxIndex][1] = positions.box.y;
+  move(intendedPositions, state, obstacles) {
+    if (obstacles.obstacleForPlayer) {
+      if (obstacles.obstacleForPlayer.type === obstacleTypes.BOX) {
+        state.currentBoard.obstacles.box[obstacles.obstacleForPlayer.index][0] = intendedPositions.box.x;
+        state.currentBoard.obstacles.box[obstacles.obstacleForPlayer.index][1] = intendedPositions.box.y;
+      }
+      else if (obstacles.obstacleForPlayer.type === obstacleTypes.EXIT) {
+        state.currentBoard.isFinished = true;
+      }
     }
-    else{
-      cloneState.currentBoard.player = positions.player;
-    }
-
-    this.setState({...cloneState});
-  }
-
-  checkIfFinish(obstaclesCallback, state){
-    if(obstaclesCallback(state.currentBoard.player, state.currentBoard.exit)){
-      let cloneState = {...state};
-      cloneState.currentBoard.isFinished = true;
-      this.setState({...cloneState});
-    }
+    state.currentBoard.player = intendedPositions.player;
+    this.setState({...state});
   }
 
   render(){

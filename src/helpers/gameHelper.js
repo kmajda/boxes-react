@@ -1,3 +1,5 @@
+import {obstacleTypes} from './gameData'
+
 export function getIntendedPositions(position, keyCode, arrowCodes){
   let interval = 30;
   let result = {
@@ -39,59 +41,29 @@ export function arrayArrowCodes() {
   return ar;
 }
 
-export function checkIfEndOfBoard(position){
-  if([450, -30].includes(position.x)){
-    return true;
+export const tryMove = (intendedPositions, obstacles, state, checkObstaclesCallback, moveCallback) => {
+  let result = {};
+  result.obstacleForPlayer = checkObstaclesCallback(intendedPositions.player, obstacles)
+  
+  if(result.obstacleForPlayer && result.obstacleForPlayer.type === obstacleTypes.BOX){
+    result.obstacleForBox = checkObstaclesCallback(intendedPositions.box, obstacles)
   }
-  if([300, -30].includes(position.y)){
-    return true;
-  }
-  return false;
-}
 
-export const checkObstaclesWithAddition = (obstacleCallback) => {
-  return (position, obstacles, additionCallback) => {
-    if(additionCallback(position)){
-      return true;
-    }
-    return obstacleCallback(position, obstacles);
+  if(!result.obstacleForPlayer || ([obstacleTypes.BOX, obstacleTypes.EXIT].includes(result.obstacleForPlayer.type) && !result.obstacleForBox)){
+    moveCallback(intendedPositions, state, result);
   }
 }
 
-export function checkObstacles(position, obstacles){
-  let result = obstacles.some(function(obstacle){
-    if(obstacle[0] == position.x && obstacle[1] == position.y){
-      return true;
-    }
-  });
+export const checkObstacles = (intendedPosition, obstacles) => {
+  let result = null;
+  Object.entries(obstacles).some((obstacle) => {
+    obstacle[1].some((coord, index) =>{
+      if(coord[0] == intendedPosition.x && coord[1] == intendedPosition.y){
+        result = {type: obstacle[0], index: index}
+        return true
+      }
+    })
+  })
+  
   return result;
-}
-
-export const mergeObstacles = (boxes, walls, exit) => [...boxes, ...walls, ...exit]
-
-export const withBoxCheck = (moveCallback, checkBoxesCallback, checkObstaclesCallback, withAdditionCallback, additionCallback) => {
-  return (positions, boxes, allObstacles) => {
-    let result = checkBoxesCallback(positions, boxes, allObstacles, checkObstaclesCallback, withAdditionCallback, additionCallback)
-    if(result.canMove){
-      moveCallback(positions, result.withBox)
-      return true;
-    }
-    else{
-      return false;
-    }
-  }
-}
-
-export const checkBoxes = (positions, boxes, allObstacles, checkObstaclesCallback, withAdditionCallback, additionCallback) => {
-  if(checkObstaclesCallback(positions.player, boxes)){
-    if(withAdditionCallback(checkObstaclesCallback)(positions.box, allObstacles, additionCallback)){
-      return { canMove: false };
-    }
-    else{
-      return { canMove: true, withBox: true }
-    }
-  }
-  else{
-    return { canMove: true, withBox: false }
-  }
 }
