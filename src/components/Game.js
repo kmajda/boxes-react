@@ -15,7 +15,8 @@ class Game extends Component{
     this.state = {
       currentBoard: getBoards()[0],
       showTimer: false,
-      isHovering: false
+      isHovering: false,
+      isFinished: false
     }
 
     this.handleLevelClick = this.handleLevelClick.bind(this);
@@ -42,7 +43,8 @@ class Game extends Component{
 
     this.setState({
       currentBoard: currentBoard,
-      showTimer: timerToShow
+      showTimer: timerToShow,
+      isFinished: false
     });
 
     if(id == 3 && oldBoardId == 3){
@@ -56,11 +58,11 @@ class Game extends Component{
     if(!arrayArrowCodes().includes(e.keyCode)){
       return;
     }
-    if(this.state.currentBoard.isFinished || this.props.isBoardBlocked){
+    if(this.state.isFinished || this.props.isBoardBlocked){
       return;
     }
     
-    let intendedPositions = getIntendedPositions({...this.state.currentBoard.player}, e.keyCode, arrowCodes())
+    let intendedPositions = getIntendedPositions(this.state.currentBoard.player, e.keyCode, arrowCodes())
    
     tryMove(intendedPositions, this.state.currentBoard.obstacles, this.state, checkObstacles, this.move)
   }
@@ -72,15 +74,15 @@ class Game extends Component{
         state.currentBoard.obstacles.box[obstacles.obstacleForPlayer.index][1] = intendedPositions.box.y;
       }
       else if (obstacles.obstacleForPlayer.type === obstacleTypes.EXIT) {
-        state.currentBoard.isFinished = true;
+        state.isFinished = true;
       }
     }
     state.currentBoard.player = intendedPositions.player;
-    this.setState({...state});
+    this.setState({...state}); // TODO
   }
 
   render(){
-    const timer = this.state.showTimer ? <Timer isFinished={this.state.currentBoard.isFinished} ref={this.child} /> : null;
+    const timer = this.state.showTimer ? <Timer isFinished={this.state.isFinished} ref={this.child} /> : null;
     const levels = getBoards().map((board, index) => {
       return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
     });
@@ -90,7 +92,7 @@ class Game extends Component{
           <h1>Press ARROWS <br/>to move green<br/>boxes and find<br/> a way to exit</h1>
           <ul>{levels}</ul>
         </div>
-        <Board data={this.state.currentBoard}/>
+        <Board data={this.state.currentBoard} isFinished={this.state.isFinished}/>
         {timer}
       </div>
     );

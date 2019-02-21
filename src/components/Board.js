@@ -17,7 +17,7 @@ export default class Board extends Component{
     
     return(
       <div className="board">
-        <div className="passed-level" style={this.props.data.isFinished ? {display: 'block'} : {}}>LEVEL {this.props.data.id} PASSED!</div>
+        <div className="passed-level" style={this.props.isFinished ? {display: 'block'} : {}}>LEVEL {this.props.data.id} PASSED!</div>
         {boxes}
         {walls}
         <div className="exit" style={{left: this.props.data.obstacles.exit[0][0], top: this.props.data.obstacles.exit[0][1]}}>Exit</div>

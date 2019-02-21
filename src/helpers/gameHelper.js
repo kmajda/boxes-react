@@ -44,7 +44,7 @@ export function arrayArrowCodes() {
 export const tryMove = (intendedPositions, obstacles, state, checkObstaclesCallback, moveCallback) => {
   let result = {};
   result.obstacleForPlayer = checkObstaclesCallback(intendedPositions.player, obstacles)
-  
+
   if(result.obstacleForPlayer && result.obstacleForPlayer.type === obstacleTypes.BOX){
     result.obstacleForBox = checkObstaclesCallback(intendedPositions.box, obstacles)
   }

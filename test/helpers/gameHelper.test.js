@@ -1,5 +1,6 @@
-import { getIntendedPositions, arrowCodes, checkObstacles } from '../../src/helpers/gameHelper'
+import { getIntendedPositions, arrowCodes, checkObstacles, tryMove } from '../../src/helpers/gameHelper'
 import {expect} from 'chai'
+import sinon from 'sinon'
 
 describe('gameHelper', () => {
   describe('.getIntendedPositions', () => {
@@ -62,6 +63,80 @@ describe('gameHelper', () => {
         let expectedResult ={type: 'box', index: 1}
         expect(checkObstacles(intendedPosition, obstacles)).to.deep.equal(expectedResult);
       });
+    });
+  });
+
+  describe('.tryMove', () => {
+    let intendedPositions, obstacles, state, stubMoveCallback, sandbox;
+
+    before(() => {
+      intendedPositions = {player: {x: 60, y: 60}, box: {x: 90, y: 60}};
+      obstacles = {};
+      state = { data: 'fake state'};
+      sandbox = sinon.createSandbox()
+    })
+
+    beforeEach(function () {
+      stubMoveCallback = sandbox.stub();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    context('when there are no obstacles', () => {
+      let stubCheckObstaclesCallback = sinon.stub().returns(null);
+
+      it('call checkObstacles and move ones with proper params', () => {
+        let expectedResult = {obstacleForPlayer: null};
+        tryMove(intendedPositions, obstacles, state, stubCheckObstaclesCallback, stubMoveCallback);
+        expect(stubCheckObstaclesCallback.callCount).to.equal(1)
+        expect(stubCheckObstaclesCallback.getCall(0).args).to.deep.equal([intendedPositions.player, obstacles]);
+        expect(stubMoveCallback.getCall(0).args).to.deep.equal([intendedPositions, state, expectedResult]);
+      });
+    });
+
+    context('when there is obstacle for player', () => {
+      context('when wall obstacle for player', () => {
+        let stubCheckObstaclesCallback = sinon.stub().onCall(0).returns({type: 'wall', index: 1});
+
+        it('call checkObstaclesCallback once and not call moveCallback', () => {
+          tryMove(intendedPositions, obstacles, state, stubCheckObstaclesCallback, stubMoveCallback);
+          expect(stubCheckObstaclesCallback.callCount).to.equal(1);
+          expect(stubMoveCallback.callCount).to.equal(0);
+          expect(stubCheckObstaclesCallback.getCall(0).args).to.deep.equal([intendedPositions.player, obstacles]);
+        });
+      })
+
+      context('when box obstacle for player', () => {
+        context('when box has obstacle', () => {
+          let stubCheckObstaclesCallback = sinon.stub().onCall(0).returns({type: 'box', index: 1});
+          stubCheckObstaclesCallback.onCall(1).returns({type: 'wall', index: 2});
+
+          it('call checkObstaclesCallback twice and not call moveCallback', () => {
+            tryMove(intendedPositions, obstacles, state, stubCheckObstaclesCallback, stubMoveCallback);
+            expect(stubCheckObstaclesCallback.callCount).to.equal(2);
+            expect(stubMoveCallback.callCount).to.equal(0);
+            expect(stubCheckObstaclesCallback.getCall(0).args).to.deep.equal([intendedPositions.player, obstacles]);
+            expect(stubCheckObstaclesCallback.getCall(1).args).to.deep.equal([intendedPositions.box, obstacles]);
+          });
+        })
+
+        context('when box does not have obstacle', () => {
+          let stubCheckObstaclesCallback = sinon.stub().onCall(0).returns({type: 'box', index: 1});
+          stubCheckObstaclesCallback.onCall(1).returns(null);
+
+          it('call checkObstaclesCallback twice and call moveCallback', () => {
+            let expectedResult = {obstacleForPlayer: {type: 'box', index: 1}, obstacleForBox: null };
+            tryMove(intendedPositions, obstacles, state, stubCheckObstaclesCallback, stubMoveCallback);
+            expect(stubCheckObstaclesCallback.callCount).to.equal(2);
+            expect(stubMoveCallback.callCount).to.equal(1);
+            expect(stubCheckObstaclesCallback.getCall(0).args).to.deep.equal([intendedPositions.player, obstacles]);
+            expect(stubCheckObstaclesCallback.getCall(1).args).to.deep.equal([intendedPositions.box, obstacles]);
+            expect(stubMoveCallback.getCall(0).args).to.deep.equal([intendedPositions, state, expectedResult]);
+          });
+        })
+      })
     });
   });
 });
