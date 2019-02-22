@@ -1,5 +1,5 @@
-import React, { Component } from "react"
 import "../styles/App.css"
+import React, { Component } from "react"
 import PlayerBox from "./PlayerBox"
 import PropTypes from 'prop-types'
 

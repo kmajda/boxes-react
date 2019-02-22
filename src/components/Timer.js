@@ -1,8 +1,9 @@
-import React, { Component } from "react"
-import { connect } from "react-redux"
 import "../styles/App.css"
 import { blockBoard, unBlockBoard } from "../actions/index"
+import { Component } from "react"
 import PropTypes from 'prop-types'
+import React from "react"
+import { connect } from "react-redux"
 
 class Timer extends Component{
   constructor(props) {

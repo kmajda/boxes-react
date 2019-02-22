@@ -4,6 +4,12 @@
     "react"
   ],
   "rules": {
+    "sort-imports": ["error", {
+      "ignoreCase": false,
+      "ignoreDeclarationSort": false,
+      "ignoreMemberSort": false,
+      "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+    }]
   },
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "env": {

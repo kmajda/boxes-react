@@ -1,12 +1,13 @@
-import React, { Component } from "react"
-import { connect } from "react-redux"
 import "../styles/App.css"
-import Board from "./Board"
-import Timer from "./Timer"
-import { getBoards, obstacleTypes } from "../helpers/gameData"
-import {arrowCodes, arrayArrowCodes, tryMove, getIntendedPositions, checkObstacles} from "../helpers/gameHelper"
+import { arrayArrowCodes, arrowCodes, checkObstacles, getIntendedPositions, tryMove } from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
+import { getBoards, obstacleTypes } from "../helpers/gameData"
+import Board from "./Board"
+import { Component } from "react"
 import PropTypes from 'prop-types'
+import React from "react"
+import Timer from "./Timer"
+import { connect } from "react-redux"
 
 class Game extends Component{
   constructor(props){
