@@ -6,6 +6,7 @@ import Timer from "./Timer"
 import { getBoards, obstacleTypes } from "../helpers/gameData"
 import {arrowCodes, arrayArrowCodes, tryMove, getIntendedPositions, checkObstacles} from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
+import PropTypes from 'prop-types'
 
 class Game extends Component{
   constructor(props){
@@ -84,7 +85,7 @@ class Game extends Component{
   render(){
     const timer = this.state.showTimer ? <Timer isFinished={this.state.isFinished} ref={this.child} /> : null;
     const levels = getBoards().map((board, index) => {
-      return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e, id) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
+      return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
     });
     return(
       <div className="container">
@@ -106,5 +107,11 @@ const mapDispatchToProps = dispatch => ({
   blockBoard: () => {dispatch(blockBoard())},
   unBlockBoard: () => {dispatch(unBlockBoard())}
 });
+
+Game.propTypes = {
+  blockBoard: PropTypes.func.isRequired,
+  unBlockBoard: PropTypes.func.isRequired,
+  isBoardBlocked: PropTypes.bool.isRequired,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

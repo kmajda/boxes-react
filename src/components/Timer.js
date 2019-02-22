@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import "../styles/App.css"
 import { blockBoard, unBlockBoard } from "../actions/index"
+import PropTypes from 'prop-types'
 
 class Timer extends Component{
   constructor(props) {
@@ -95,5 +96,12 @@ const mapDispatchToProps = dispatch => ({
   blockBoard: () => {dispatch(blockBoard())},
   unBlockBoard: () => {dispatch(unBlockBoard())}
 });
+
+Timer.propTypes = {
+  blockBoard: PropTypes.func.isRequired,
+  unBlockBoard: PropTypes.func.isRequired,
+  isBoardBlocked: PropTypes.bool.isRequired,
+  isFinished: PropTypes.bool.isRequired
+}
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(Timer);

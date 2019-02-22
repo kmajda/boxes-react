@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import PropTypes from 'prop-types'
 
 export default class PlayerBox extends Component{
   constructor(props) {
@@ -17,4 +18,8 @@ export default class PlayerBox extends Component{
       </div>
     )
   }
+}
+
+PlayerBox.propTypes = {
+  player: PropTypes.object.isRequired
 }

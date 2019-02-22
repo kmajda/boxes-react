@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import "../styles/App.css"
 import PlayerBox from "./PlayerBox"
+import PropTypes from 'prop-types'
 
 export default class Board extends Component{
   constructor(props) {
@@ -25,4 +26,9 @@ export default class Board extends Component{
       </div>
     );
   }
+}
+
+Board.propTypes = {
+  data: PropTypes.object.isRequired,
+  isFinished: PropTypes.bool.isRequired
 }
