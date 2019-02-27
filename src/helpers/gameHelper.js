@@ -41,7 +41,7 @@ export function arrayArrowCodes() {
   return ar;
 }
 
-export const tryMove = (intendedPositions, obstacles, state, checkObstaclesCallback, moveCallback) => {
+export const tryMove = (intendedPositions, obstacles, checkObstaclesCallback, moveCallback) => {
   let result = {};
   result.obstacleForPlayer = checkObstaclesCallback(intendedPositions.player, obstacles)
 
@@ -50,7 +50,7 @@ export const tryMove = (intendedPositions, obstacles, state, checkObstaclesCallb
   }
 
   if(!result.obstacleForPlayer || ([obstacleTypes.BOX, obstacleTypes.EXIT].includes(result.obstacleForPlayer.type) && !result.obstacleForBox)){
-    moveCallback(intendedPositions, state, result);
+    moveCallback(intendedPositions, result);
   }
 }
 

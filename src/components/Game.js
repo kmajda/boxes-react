@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
 import React from "react"
 import Timer from "./Timer"
 import { connect } from "react-redux"
+import { fromJS } from 'immutable'
 
 class Game extends Component{
   constructor(props){
@@ -66,21 +67,24 @@ class Game extends Component{
     
     let intendedPositions = getIntendedPositions(this.state.currentBoard.player, e.keyCode, arrowCodes())
    
-    tryMove(intendedPositions, this.state.currentBoard.obstacles, this.state, checkObstacles, this.move)
+    tryMove(intendedPositions, this.state.currentBoard.obstacles, checkObstacles, this.move)
   }
 
-  move(intendedPositions, state, obstacles) {
+  move(intendedPositions, obstacles) {
+    let stateMap = fromJS(this.state);
     if (obstacles.obstacleForPlayer) {
       if (obstacles.obstacleForPlayer.type === obstacleTypes.BOX) {
-        state.currentBoard.obstacles.box[obstacles.obstacleForPlayer.index][0] = intendedPositions.box.x;
-        state.currentBoard.obstacles.box[obstacles.obstacleForPlayer.index][1] = intendedPositions.box.y;
+        stateMap = stateMap.updateIn(['currentBoard', 'obstacles', 'box'], list => {
+          return list.splice(obstacles.obstacleForPlayer.index, 1, [intendedPositions.box.x, intendedPositions.box.y])}
+        );
       }
       else if (obstacles.obstacleForPlayer.type === obstacleTypes.EXIT) {
-        state.isFinished = true;
+        stateMap = stateMap.setIn(['isFinished'], true);
       }
     }
-    state.currentBoard.player = intendedPositions.player;
-    this.setState(state);
+
+    stateMap = stateMap.setIn(['currentBoard', 'player'], intendedPositions.player);
+    this.setState(stateMap.toJS());
   }
 
   render(){
