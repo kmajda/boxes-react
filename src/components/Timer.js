@@ -33,7 +33,7 @@ class Timer extends Component{
     cloneState.showTimeout = false;
     cloneState.counter = 15;
     cloneState.interval = null;
-    this.setState({...cloneState}, () => this.setTimer());
+    this.setState(cloneState, () => this.setTimer());
   }
 
   manageTimeout(){
