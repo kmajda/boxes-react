@@ -18,7 +18,6 @@ class Game extends Component{
     this.state = {
       currentBoard: getBoards()[0],
       showTimer: false,
-      isHovering: false,
       isFinished: false
     }
 
