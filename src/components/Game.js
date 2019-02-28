@@ -38,7 +38,10 @@ class Game extends Component{
     let currentLevel = this.state.levels.filter(board => board.id == id)[0];
     
     if(currentLevel.withTimer){
-      this.setState({renderTimer: false}, () => {this.setState({renderTimer: true})})
+      this.props.blockBoard();
+      this.setState({renderTimer: false}, () => {this.setState({renderTimer: true})});
+    }else{
+      this.props.unBlockBoard();
     }
 
     this.setState({

@@ -22,10 +22,8 @@ class Timer extends Component{
 
   manageTimeout(){
     clearInterval(this.state.interval);
-    if(!this.props.isBoardBlocked){
-      this.props.blockBoard();
-      this.setState({showTimeout: true});
-    }
+    this.props.blockBoard();
+    this.setState({showTimeout: true});
   }
 
   setTimer(){
@@ -36,7 +34,6 @@ class Timer extends Component{
   }
 
   componentDidMount(){
-    this.props.blockBoard();
     let timeout = setTimeout(() => {
       this.props.unBlockBoard();
       this.setTimer();
@@ -44,11 +41,11 @@ class Timer extends Component{
     this.setState({timeout: timeout})
   }
 
-  componentDidUpdate(){
+  componentDidUpdate(prevProps, prevState){
     if(this.props.isFinished){
       clearInterval(this.state.interval);
     }
-    if(this.state.counter == 0){
+    if(prevState.counter !== this.state.counter && this.state.counter == 0){
       this.manageTimeout();
     }
   }
