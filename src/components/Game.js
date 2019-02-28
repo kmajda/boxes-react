@@ -87,7 +87,7 @@ class Game extends Component{
 
     return(
       <div className="container">
-        <Navigation levels={this.state.levels} currentLevelId={this.state.currentLevel.id} levelClick={this.handleLevelClick} />
+        <Navigation levels={this.state.levels} currentLevelId={this.state.currentLevel.id} onLevelClick={this.handleLevelClick} />
         <Board data={this.state.currentLevel} isFinished={this.state.isFinished}/>
         {timer}
       </div>

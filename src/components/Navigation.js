@@ -5,7 +5,7 @@ import React from 'react'
 export default class Navigation extends Component{
   render(){
     const levels = this.props.levels.map((level, index) => {
-      return <li key={index}><a className={this.props.currentLevelId == level.id ? 'active' : ''} onClick={(e) => this.props.levelClick(e, level.id)}>{`LEVEL ${level.id}`}</a></li>
+      return <li key={index}><a className={this.props.currentLevelId == level.id ? 'active' : ''} onClick={(e) => this.props.onLevelClick(e, level.id)}>{`LEVEL ${level.id}`}</a></li>
     });
     
     return(
@@ -18,7 +18,7 @@ export default class Navigation extends Component{
 }
 
 Navigation.propTypes = {
-  levelClick: PropTypes.func.isRequired,
+  onLevelClick: PropTypes.func.isRequired,
   levels: PropTypes.array.isRequired,
   currentLevelId: PropTypes.number.isRequired,
 }
