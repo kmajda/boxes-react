@@ -1,4 +1,4 @@
-export function getBoards() {
+export function getLevels() {
   return [
     {
       id: 1,

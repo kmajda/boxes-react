@@ -10,30 +10,14 @@ class Timer extends Component{
     super(props);
 
     this.state = {
-      addAnimateClass: true,
       showTimeout: false,
       counter: 15,
       interval: null,
-      disableReset: false
+      timeout: null
     };
 
-    this.handleReset = this.handleReset.bind(this);
     this.manageTimeout = this.manageTimeout.bind(this);
     this.setTimer = this.setTimer.bind(this);
-  }
-  
-  handleReset(){
-    if(this.state.disableReset){
-      return;
-    }
-    
-    clearInterval(this.state.interval);
-    let cloneState = {...this.state};
-    cloneState.addAnimateClass = false;
-    cloneState.showTimeout = false;
-    cloneState.counter = 15;
-    cloneState.interval = null;
-    this.setState(cloneState, () => this.setTimer());
   }
 
   manageTimeout(){
@@ -45,21 +29,19 @@ class Timer extends Component{
   }
 
   setTimer(){
-    this.setState({disableReset: true}, function () {
-      setTimeout(() => {
-        this.setState({disableReset: false});
-        this.props.unBlockBoard();
-        let interval = setInterval(() => {
-          let counter = this.state.counter - 1;
-          this.setState({counter: counter});
-        }, 1000);
-        this.setState({interval: interval});
-      }, 1800);
-    });
+    let interval = setInterval(() => {
+      this.setState((state) => ({counter: state.counter -1}));
+    }, 1000);
+    this.setState({interval: interval});
   }
 
   componentDidMount(){
-    this.setTimer();
+    this.props.blockBoard();
+    let timeout = setTimeout(() => {
+      this.props.unBlockBoard();
+      this.setTimer();
+    }, 1800);
+    this.setState({timeout: timeout})
   }
 
   componentDidUpdate(){
@@ -69,21 +51,18 @@ class Timer extends Component{
     if(this.state.counter == 0){
       this.manageTimeout();
     }
-    if(!this.state.addAnimateClass){
-      setTimeout(() => this.setState({addAnimateClass: true}), 100);
-    }
   }
 
   componentWillUnmount(){
     clearInterval(this.state.interval);
+    clearTimeout(this.state.timeout);
   }
 
   render(){
-    const animateClass = this.state.addAnimateClass ? 'animateTimer' : '';
     const timeout = this.state.showTimeout ? <div className="timeout">TIMEOUT!</div> : null;
     return(
       <div>
-        <div className={'timer-info ' + animateClass}>YOU HAVE {this.state.counter} SECONDS!</div>
+        <div className='timer-info animateTimer'>YOU HAVE {this.state.counter} SECONDS!</div>
         {timeout}
       </div>
     );

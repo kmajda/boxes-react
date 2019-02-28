@@ -3,14 +3,14 @@ import {shallow} from 'enzyme'
 import {expect} from 'chai'
 import Board from '../../src/components/Board'
 import PlayerBox from '../../src/components/PlayerBox'
-import {getBoards} from '../fixtures/gameData'
+import {getLevels} from '../fixtures/gameData'
 
 describe('<Board/>', () => {
   let wrapper;
   
   before(() => {
-    const boards = getBoards();
-    wrapper = shallow(<Board data={boards[0]}/>);
+    const levels = getLevels();
+    wrapper = shallow(<Board data={levels[0]}/>);
   });
 
   it('should render <PlayerBox/> component', () => {

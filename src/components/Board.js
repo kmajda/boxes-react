@@ -1,7 +1,8 @@
 import "../styles/App.css"
-import React, { Component } from "react"
+import { Component } from "react"
 import PlayerBox from "./PlayerBox"
 import PropTypes from 'prop-types'
+import React from "react"
 
 export default class Board extends Component{
   constructor(props) {
