@@ -17,7 +17,6 @@ class Game extends Component{
 
     this.state = {
       currentBoard: getBoards()[0],
-      showTimer: false,
       isFinished: false
     }
 
@@ -33,10 +32,8 @@ class Game extends Component{
   handleLevelClick(e, id){
     e.preventDefault();
     let oldBoardId = this.state.currentBoard.id;
-    let currentBoard = getBoards().filter(function(board){
-      return board.id == id;
-    })[0];
-    let timerToShow = id == 3 ? true : false;
+    let currentBoard = getBoards().filter(board => board.id == id)[0];
+
     if(id == 3){
       this.props.blockBoard();
     }else{
@@ -45,7 +42,6 @@ class Game extends Component{
 
     this.setState({
       currentBoard: currentBoard,
-      showTimer: timerToShow,
       isFinished: false
     });
 
@@ -87,7 +83,7 @@ class Game extends Component{
   }
 
   render(){
-    const timer = this.state.showTimer ? <Timer isFinished={this.state.isFinished} ref={this.child} /> : null;
+    const timer = this.state.currentBoard.withTimer ? <Timer isFinished={this.state.isFinished} ref={this.child} /> : null;
     const levels = getBoards().map((board, index) => {
       return <li key={index}><a className={this.state.currentBoard.id == board.id ? 'active' : ''} onClick={(e) => this.handleLevelClick(e, board.id)}>{`LEVEL ${board.id}`}</a></li>
     });
