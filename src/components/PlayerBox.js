@@ -13,7 +13,7 @@ export default class PlayerBox extends Component{
     }
 
     return(
-      <div className="player-box"
+      <div className="unit player-box"
            style={style}>Me
       </div>
     )

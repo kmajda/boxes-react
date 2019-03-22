@@ -1,4 +1,4 @@
-import "../styles/App.css"
+import "../styles/App.scss"
 import { arrayArrowCodes, arrowCodes, checkObstacles, getIntendedPositions, tryMove } from "../helpers/gameHelper"
 import { blockBoard, unBlockBoard } from "../actions/index"
 import { getLevels, obstacleTypes } from "../helpers/gameData"

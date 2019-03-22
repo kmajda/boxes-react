@@ -1,9 +1,12 @@
+$color-board: rgb(255, 255, 89);
+$color-info: #fffccb;
+
 body{
     font-family: 'Quattrocento', serif;
     background-color: rgb(21, 27, 12);
 }
 
-.box, .wall, .exit, .player-box {
+.unit {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -37,7 +40,7 @@ body{
 .board {
     width: 450px;
     height: 300px;
-    background-color: #FFFF59;
+    background-color: $color-board;
     position: relative;
     float: left;
     -webkit-border-radius: 4px;
@@ -126,7 +129,7 @@ li a.active{
     padding: 17px 0;
     font-size: 36px;
     text-align: center;
-    color: #fffccb;
+    color: $color-info;
 }
 .timer-info, .timeout{
     position: absolute;
@@ -137,20 +140,20 @@ li a.active{
     padding: 17px 0;
     font-size: 36px;
     text-align: center;
-    color: #fffccb;
+    color: $color-info;
 }
 
 .animateTimer{
-    -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+    -webkit-animation-name: slideTimer; /* Safari 4.0 - 8.0 */
     -webkit-animation-duration: 0.5s; /* Safari 4.0 - 8.0 */
     -webkit-animation-delay: 1.3s; /* Safari 4.0 - 8.0 */
-    animation-name: example;
+    animation-name: slideTimer;
     animation-duration: 0.5s;
     animation-delay: 1.2s;
     animation-fill-mode: forwards;
 }
 
-@-webkit-keyframes example {
+@-webkit-keyframes slideTimer {
     to {
         top:-14%;
         left:0%;
@@ -158,7 +161,7 @@ li a.active{
         font-size: 11px;
         border-radius: 4px;
         padding: 14px 0;
-        background-color: rgb(255, 255, 89);
+        background-color: $color-board;
         color:black;
         font-weight: 700;
     }

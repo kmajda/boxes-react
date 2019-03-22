@@ -1,4 +1,4 @@
-import "../styles/App.css"
+import "../styles/App.scss"
 import { blockBoard, unBlockBoard } from "../actions/index"
 import { Component } from "react"
 import PropTypes from 'prop-types'
